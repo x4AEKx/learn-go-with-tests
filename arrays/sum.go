@@ -10,11 +10,17 @@ func Sum(numbers []int) int {
 	return sum
 }
 
-func SumAll(numbersToSum ...[]int) []int {
+func SumAllTails(numbersToSum ...[]int) []int {
 	var newSlice []int
 
-	for _, value := range numbersToSum {
-		newSlice = append(newSlice, Sum(value))
+	for _, numbers := range numbersToSum {
+		if len(numbers) == 0 {
+			newSlice = append(newSlice, 0)
+		} else {
+			tail := numbers[1:]
+			newSlice = append(newSlice, Sum(tail))
+		}
+
 	}
 
 	return newSlice
