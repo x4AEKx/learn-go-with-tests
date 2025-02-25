@@ -6,6 +6,15 @@ type Shape interface {
 	Area() float64
 }
 
+type Triangle struct {
+	Base   float64
+	Heigth float64
+}
+
+func (t Triangle) Area() float64 {
+	return (t.Base * t.Heigth) * 0.5
+}
+
 type Rectangle struct {
 	Heigth float64
 	Width  float64
