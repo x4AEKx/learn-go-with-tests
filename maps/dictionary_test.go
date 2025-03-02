@@ -23,6 +23,26 @@ func TestSearch(t *testing.T) {
 	})
 }
 
+func TestDelete(t *testing.T) {
+	t.Run("existing value", func(t *testing.T) {
+		key := "test"
+		value := "value"
+		dictionary := Dictionary{key: value}
+		dictionary.Delete(key)
+
+		_, err := dictionary.Search(key)
+		assertError(t, err, ErrNotFound)
+	})
+
+	t.Run("non-existing value", func(t *testing.T) {
+		key := "key"
+		dictionary := Dictionary{}
+		err := dictionary.Delete(key)
+		assertError(t, err, ErrWordDoesNotExist)
+	})
+
+}
+
 func TestUpdate(t *testing.T) {
 	t.Run("existing word", func(t *testing.T) {
 		key := "test"
