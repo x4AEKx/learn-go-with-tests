@@ -13,7 +13,7 @@ func TestSearch(t *testing.T) {
 		assertsString(t, got, expected)
 	})
 
-	t.Run("", func(t *testing.T) {
+	t.Run("unknown value", func(t *testing.T) {
 		_, err := dictionary.Search("unknown")
 
 		if err == nil {
@@ -21,6 +21,28 @@ func TestSearch(t *testing.T) {
 		}
 		assertError(t, err, ErrNotFound)
 	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("existing word", func(t *testing.T) {
+		key := "test"
+		value := "value"
+		dictionary := Dictionary{key: value}
+		newValue := "new definition"
+
+		dictionary.Update(key, newValue)
+		assertDefinition(t, dictionary, key, newValue)
+	})
+
+	t.Run("new value", func(t *testing.T) {
+		key := "test"
+		value := "value"
+		dictionary := Dictionary{}
+
+		err := dictionary.Update(key, value)
+		assertError(t, err, ErrWordDoesNotExist)
+	})
+
 }
 
 func TestAdd(t *testing.T) {
