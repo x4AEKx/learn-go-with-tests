@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestCountDown(t *testing.T) {
@@ -41,5 +42,17 @@ Go!`
 
 	if spySleeper.Calls != 3 {
 		t.Errorf("got %d, but want 3 calls", spySleeper.Calls)
+	}
+}
+
+func TestConfigurationSleeper(t *testing.T) {
+	sleepTime := 5 * time.Second
+
+	spyTime := &SpyTime{}
+	sleeper := &ConfigurationSleeper{sleepTime, spyTime.SetDurationSlept}
+	sleeper.Sleep()
+
+	if sleepTime != spyTime.durationSlept {
+		t.Errorf("want %v, but got %v", sleepTime, spyTime.durationSlept)
 	}
 }
