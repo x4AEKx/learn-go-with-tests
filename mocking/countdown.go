@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"io"
+	"iter"
 	"os"
 	"time"
 )
 
-const countdownStart = 3
 const finalWord = "Go!"
 const sleep = "sleep"
 const write = "write"
@@ -43,8 +43,35 @@ func (s *DefaultSleeper) Sleep() {
 	time.Sleep(1 * time.Second)
 }
 
+type ConfigurationSleeper struct {
+	duration time.Duration
+	sleep    func(time.Duration)
+}
+
+func (c ConfigurationSleeper) Sleep() {
+	c.sleep(c.duration)
+}
+
+type SpyTime struct {
+	durationSlept time.Duration
+}
+
+func (s *SpyTime) SetDurationSlept(duration time.Duration) {
+	s.durationSlept = duration
+}
+
+func countDownFrom(from int) iter.Seq[int] {
+	return func(yield func(int) bool) {
+		for i := from; i > 0; i-- {
+			if !yield(i) {
+				return
+			}
+		}
+	}
+}
+
 func Countdown(out io.Writer, sleeper Sleeper) {
-	for i := countdownStart; i > 0; i-- {
+	for i := range countDownFrom(3) {
 		fmt.Fprintln(out, i)
 		sleeper.Sleep()
 	}
@@ -53,6 +80,6 @@ func Countdown(out io.Writer, sleeper Sleeper) {
 }
 
 func main() {
-	sleeper := &DefaultSleeper{}
+	sleeper := &ConfigurationSleeper{1 * time.Second, time.Sleep}
 	Countdown(os.Stdout, sleeper)
 }
